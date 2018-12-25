@@ -24,7 +24,7 @@ def cross_validation():
         print("cross_validation at labeled rate:", labeled_rate)
         indicator = ['pre', 'rec', 'f1', 'acc', 'opt']
         algorithm = 'EATT'
-        for k in range(2, 3):
+        for k in range(0, 6):
             proj_score = []
             try:
                 for ind in indicator:
@@ -43,7 +43,6 @@ def cross_validation():
             idx = np.load("index/cross_vad/" + str(labeled_rate) + '/' + datasets[k] + '.npz')
             train_idx, test_idx, label_idx = idx['train_idx'], idx['test_idx'], idx['label_idx']
 
-            print(datasets[k])
             curr_vad = 0
 
             for i in range(10):
@@ -69,7 +68,7 @@ def cross_validation():
                     proj_score[4].loc[curr_vad, algorithm] = P_opt(pre, effort[test_index], y_test)
 
                     curr_vad += 1
-
+                    print('dataset:', datasets[k], '****** validation count:', curr_vad)
             for i, ind in enumerate(indicator):
                 proj_score[i].to_csv("score/"+str(labeled_rate)+"/"+datasets[k]+"/"+ind+".csv")
                 print(ind, proj_score[i].mean().values)
@@ -101,7 +100,6 @@ def timewise_validation():
 
         idx = np.load("index/time_wise/" + datasets[k] + '.npz')
         label_idx, unlabel_idx, test_idx = idx['label_idx'], idx['unlabel_idx'], idx['test_idx']
-        print(datasets[k])
         curr_vad = 0
 
         for label_index, unlabel_index, test_index in zip(label_idx, unlabel_idx, test_idx):
@@ -125,6 +123,8 @@ def timewise_validation():
             proj_score[4].loc[curr_vad, algorithm] = P_opt(pre, effort[test_index], y_test)
 
             curr_vad += 1
+            print('dataset:', datasets[k], '****** validation count:', curr_vad)
+
         for i, ind in enumerate(indicator):
             proj_score[i].to_csv("score/tw/"+datasets[k]+"/"+ind+".csv")
             print(ind, proj_score[i].mean().values)
